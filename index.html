@@ -1,0 +1,144 @@
+<!doctype html>
+<html>
+ 
+    <head>
+ 
+        <meta charset="utf-8">       
+        <meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1">
+        <title>Mobile</title>
+        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" />
+        <link rel="stylesheet" href="left-panel.css" />
+        <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+        <script src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
+ 
+    </head>
+ 
+    <body>
+ 
+        <div data-role="page" id="demo-page" data-theme="d" data-url="demo-page">
+ 
+            <div data-role="header" data-theme="c">
+                <h1>Header</h1>
+                <a href="#left-panel" data-icon="bars" data-iconpos="notext" data-shadow="false" data-iconshadow="false">Menu</a>
+            </div><!-- /header -->
+ 
+            <div data-role="content">
+                 <p id="geolocation">Finding geolocation...</p>
+  		</div>
+</p>
+            </div><!--/content-->
+ 
+            <div data-role="footer" data-theme="c">
+                <h4>footer</h4>
+            </div><!-- /footer-->
+ 
+            <div data-role="panel" id="left-panel" data-theme="c">
+                <ul data-role="listview" data-theme="d">
+                    <li  data-icon="arrow-l"><a href="#" data-rel="close"></a></li>
+                    <li data-role="list-divider">Menu</li>
+                    <li data-icon="gear"><a href="#">ตั้งค่า</a></li>                    
+                    <li data-icon="delete"><a href="#">ออก</a></li>
+                </ul>
+            </div><!-- /panel -->
+ 
+        </div>><!-- /page -->
+ 
+ 
+    </body>
+ 
+</html>
+<script type="text/javascript" charset="utf-8">
+
+    // Wait for device API libraries to load
+    //
+    document.addEventListener("deviceready", onDeviceReady, false);
+
+    // device APIs are available
+    //
+    function onDeviceReady() {
+        navigator.geolocation.getCurrentPosition(onSuccess, onError);
+    }
+
+    // onSuccess Geolocation
+    //
+    function onSuccess(position) {
+        var element = document.getElementById('geolocation');
+        element.innerHTML = 'Latitude: '           + position.coords.latitude              + '<br />' +
+                            'Longitude: '          + position.coords.longitude             + '<br />' +
+                            'Altitude: '           + position.coords.altitude              + '<br />' +
+                            'Accuracy: '           + position.coords.accuracy              + '<br />' +
+                            'Altitude Accuracy: '  + position.coords.altitudeAccuracy      + '<br />' +
+                            'Heading: '            + position.coords.heading               + '<br />' +
+                            'Speed: '              + position.coords.speed                 + '<br />' +
+                            'Timestamp: '          + position.timestamp                    + '<br />';
+    }
+
+    // onError Callback receives a PositionError object
+    //
+    function onError(error) {
+        alert('code: '    + error.code    + '\n' +
+              'message: ' + error.message + '\n');
+    }
+
+    </script>
+function success(position) 
+{
+var s = document.querySelector('#status');
+if (s.className == 'success') 
+{
+return;
+}
+s.innerHTML = "Found you!";
+s.className = 'Success';
+var mapcanvas = document.createElement('div');
+mapcanvas.id = 'mapcanvas';
+mapcanvas.style.height = '100%';
+mapcanvas.style.width = '100%';
+document.querySelector('#map').appendChild(mapcanvas);
+var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+var myOptions = {
+zoom: 15,
+center: latlng,
+mapTypeControl: false,
+navigationControlOptions: {style: google.maps.NavigationControlStyle.SMALL},
+mapTypeId: google.maps.MapTypeId.ROADMAP
+};
+var map = new google.maps.Map(document.getElementById("mapcanvas"), myOptions);
+var marker = new google.maps.Marker({
+position: latlng, 
+map: map, 
+title:"You are here!"
+});
+$.cookie("MyLat", position.coords.latitude); // Storing latitude value
+$.cookie("MyLon", position.coords.longitude); // Storing longitude value
+}
+function error(msg) 
+{
+var s = document.querySelector('#status');
+s.innerHTML = typeof msg == 'string' ? msg : "failed";
+s.className = 'Fail';
+}
+if (navigator.geolocation) 
+{
+navigator.geolocation.getCurrentPosition(success, error);
+} 
+else
+{
+error('Not supported'); //HTML Support
+}
+
+//Jquery Code 
+$(document).ready(function()
+{
+$("#check").click(function()
+{
+var lat = $.cookie("MyLat");
+var lon = $.cookie("MyLon");
+alert('Latitued: '+lat);
+alert('Longitude: '+lon);
+var url="http://maps.googleapis.com/maps/api/geocode/json?latlng="+lat+","+lon+"&sensor=false";
+alert('Google Map API: '+url);
+//Get Json Request Here
+});
+});
+</script>
