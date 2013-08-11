@@ -23,9 +23,25 @@
             </div><!-- /header -->
  
             <div data-role="content">
-                 <p id="geolocation">Finding geolocation...</p>
-  		</div>
-</p>
+      You are at Latitude: <INPUT TYPE="text" ID="latitudeTxt" SIZE="10">  Longitude: <INPUT TYPE="text" ID="longitudeTxt" SIZE="10">
+ <SCRIPT>
+function getMyLocation() {
+   if (Modernizr.geolocation) {
+      navigator.geolocation.getCurrentPosition(successCallbackFunc);
+    } else {
+       alert("Your web browser does not support Geolocation API");
+    }
+}
+function successCallbackFunc(position) {
+   var latitude = position.coords.latitude;
+   var longitude = position.coords.longitude;
+   var latTxt = document.getElementById("latitudeTxt");
+   latTxt.value = latitude;
+   var longTxt = document.getElementById("longitudeTxt");
+   longTxt.value = longitude;
+}
+getMyLocation(); 
+</SCRIPT>
             </div><!--/content-->
  
             <div data-role="footer" data-theme="c">
@@ -47,98 +63,3 @@
     </body>
  
 </html>
-<script type="text/javascript" charset="utf-8">
-
-    // Wait for device API libraries to load
-    //
-    document.addEventListener("deviceready", onDeviceReady, false);
-
-    // device APIs are available
-    //
-    function onDeviceReady() {
-        navigator.geolocation.getCurrentPosition(onSuccess, onError);
-    }
-
-    // onSuccess Geolocation
-    //
-    function onSuccess(position) {
-        var element = document.getElementById('geolocation');
-        element.innerHTML = 'Latitude: '           + position.coords.latitude              + '<br />' +
-                            'Longitude: '          + position.coords.longitude             + '<br />' +
-                            'Altitude: '           + position.coords.altitude              + '<br />' +
-                            'Accuracy: '           + position.coords.accuracy              + '<br />' +
-                            'Altitude Accuracy: '  + position.coords.altitudeAccuracy      + '<br />' +
-                            'Heading: '            + position.coords.heading               + '<br />' +
-                            'Speed: '              + position.coords.speed                 + '<br />' +
-                            'Timestamp: '          + position.timestamp                    + '<br />';
-    }
-
-    // onError Callback receives a PositionError object
-    //
-    function onError(error) {
-        alert('code: '    + error.code    + '\n' +
-              'message: ' + error.message + '\n');
-    }
-
-    </script>
-function success(position) 
-{
-var s = document.querySelector('#status');
-if (s.className == 'success') 
-{
-return;
-}
-s.innerHTML = "Found you!";
-s.className = 'Success';
-var mapcanvas = document.createElement('div');
-mapcanvas.id = 'mapcanvas';
-mapcanvas.style.height = '100%';
-mapcanvas.style.width = '100%';
-document.querySelector('#map').appendChild(mapcanvas);
-var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-var myOptions = {
-zoom: 15,
-center: latlng,
-mapTypeControl: false,
-navigationControlOptions: {style: google.maps.NavigationControlStyle.SMALL},
-mapTypeId: google.maps.MapTypeId.ROADMAP
-};
-var map = new google.maps.Map(document.getElementById("mapcanvas"), myOptions);
-var marker = new google.maps.Marker({
-position: latlng, 
-map: map, 
-title:"You are here!"
-});
-$.cookie("MyLat", position.coords.latitude); // Storing latitude value
-$.cookie("MyLon", position.coords.longitude); // Storing longitude value
-}
-function error(msg) 
-{
-var s = document.querySelector('#status');
-s.innerHTML = typeof msg == 'string' ? msg : "failed";
-s.className = 'Fail';
-}
-if (navigator.geolocation) 
-{
-navigator.geolocation.getCurrentPosition(success, error);
-} 
-else
-{
-error('Not supported'); //HTML Support
-}
-
-//Jquery Code 
-$(document).ready(function()
-{
-$("#check").click(function()
-{
-var lat = $.cookie("MyLat");
-var lon = $.cookie("MyLon");
-alert('Latitued: '+lat);
-alert('Longitude: '+lon);
-var url="http://maps.googleapis.com/maps/api/geocode/json?latlng="+lat+","+lon+"&sensor=false";
-alert('Google Map API: '+url);
-//Get Json Request Here
-});
-});
-</script>
